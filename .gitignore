@@ -1,7 +1,13 @@
 Lichtuhr.txt
 Lichtuhr.tex
 Lichtuhr.tcp
+Lichtuhr.tps
+Lichtuhr.log
+Lichtuhr.blg
+Lichtuhr.bbl
+Lichtuhr.aux
 *.jpg
+*.png
 
 
 
