@@ -1,7 +1,7 @@
 /*
  * Autor: Marco Steffens (marco.steffens@gmail.com)
- * Datum: 09.03.2016
- * Version: 1.0
+ * Datum: 23.03.2016
+ * Version: 2.0
  * Lizenz: cc zero (http://creativecommons.org/publicdomain/zero/1.0/deed.de)
  */
  
@@ -28,6 +28,25 @@ const int LED_4 = 6; //
 const int LED_3 = 7; //
 const int LED_2 = 8; //
 const int LED_1 = 9; //Oberste LED
+
+//Pins des Motor-Poti
+const int DIRECTION_A = 10;
+const int DIRECTION_B = 11;
+
+const int SPEED = 200;         //Geschwindigkeit des Poti. Werte unter 200 gehen mit Stromversorgung über USB gar nicht, da regt sich der Motor nicht.
+
+unsigned long time = millis();
+const unsigned long PERIOD = 5000; //alle 5000ms soll der poti fahren.
+
+const int WAITING = 0;
+const int RUNNING = 1;
+int status = WAITING;
+
+const int NONE = 0;
+const int UP = 1;
+const int DOWN = 2;
+int direction = NONE;
+
 
 /* Im zweidimensionalen Array "arrDisplay[][]" wird das abgelegt, was letztlich
  *  Angezeigt wird. Also "hh:mm", und außerdem die Leerräume bzw. das Trenn- 
@@ -108,12 +127,156 @@ void setup()
   //rtc.setDate(5, 3, 2016);    // Setzt das Datum auf den 5. März 2016
   //rtc.setDOW();               // Setzt den Wochentag (Day-of-Week) in Abhängigkeit vom aktuellen Datum
 
+
+  /*
+  analogWrite(motorA, 255);
+  analogWrite(motorB, 0);
+  delay(200);
+  analogWrite(motorA, 0);
+  analogWrite(motorB, 255);
+  delay(200);
+  analogWrite(motorA, 0);
+  analogWrite(motorB, 0);
+*/
+
+  // Pins für Motorenrichtungen als Ausgang
+//  pinMode(DIRECTION_A, OUTPUT);
+//  pinMode(DIRECTION_B, OUTPUT);
+  
+  // Geschwindigkeiten setzen
+//  analogWrite(geschwindigkeitA, geschwindigkeit);
+//  analogWrite(geschwindigkeitB, geschwindigkeit);
+
+  //Poti in Startposition fahren:
+  analogWrite(DIRECTION_A, SPEED);
+  analogWrite(DIRECTION_B, 0);
+  delay(400);
+  analogWrite(DIRECTION_A, 0);
+  analogWrite(DIRECTION_B, 0);
+
+  delay(2000);
 }
  
 /****************************************************************************
  * void loop()
  ****************************************************************************/
+
 void loop()
+{
+
+  switch (status) {
+
+    case WAITING:
+      Serial.println("WAITING");
+      //wenn die zeit gekommen ist
+      //setzte den status auf running und
+      //break;
+      //sonst:
+      //delay(1000);
+      if (millis() - time > PERIOD)
+      {
+        status = RUNNING;
+      }
+      else
+      {
+        delay(1000);
+      }
+      break;
+
+    case RUNNING:
+      Serial.println("RUNNING");
+      //wenn direction NONE ist
+      //setzte direction auf up
+      //schalte die motoren entsprechend
+      //wenn direction UP ist und wenn das obere offset erreicht ist
+      //setze direction auf down
+      //schalte motoren entsprechend
+      //wenn direction auf down ist und wenn das untere offset erreicht ist
+      //setze direction auf NONE
+      //und schalte motoren aus.
+      //und merk dir die zeit.
+      poti_wert =analogRead(POTI_PIN);
+      Serial.print("Poti-Wert: ");Serial.println(poti_wert);
+      
+      if (direction == NONE)
+      {
+        Serial.print("direction: ");Serial.println("NONE");
+        direction = UP;
+        analogWrite(DIRECTION_A, 0);
+        analogWrite(DIRECTION_B, SPEED);
+      }
+      else if ((direction == UP) && (poti_wert > (1023 - OFFSET/2)))
+      {
+        Serial.print("direction: ");Serial.println("UP");
+        direction = DOWN; 
+        analogWrite(DIRECTION_A, SPEED);
+        analogWrite(DIRECTION_B, 0);
+      }
+      else if ((direction == DOWN) && (poti_wert < OFFSET/2))
+      {
+        Serial.print("direction: ");Serial.println("DOWN");
+        direction = NONE;
+        status = WAITING;
+        analogWrite(DIRECTION_A, 0);
+        analogWrite(DIRECTION_B, 0);
+        time = millis();
+      }
+      break;
+    default: 
+      // if nothing else matches, do the default
+      // default is optional
+      break;
+
+
+  }
+  /*
+   * Der Poti bewegt sich im Bereich 0-(1/2 offset) bzw. 1023-(1/2 offset)
+   * 
+   */
+
+/*
+
+  
+  poti_wert =analogRead(POTI_PIN);
+
+  analogWrite(DIRECTION_A, 215);
+  analogWrite(DIRECTION_B, 0);
+
+  Serial.print("Poti-Wert: "); Serial.println(poti_wert);
+
+  if(poti_wert == 1023)
+  {
+    analogWrite(DIRECTION_A, 0);
+    analogWrite(DIRECTION_B, 0);
+    delay(40000);
+  }
+  */
+/*  
+  //movingForwards
+  //movingBackwards
+  //for (int i = 0; i < 1024; ++i)
+  //{
+    //analogWrite(motorA, 255);
+    //analogWrite(motorB, 0);
+    
+  analogWrite(DIRECTION_A, 215);
+  analogWrite(DIRECTION_B, 0);
+  delay(500);
+  analogWrite(DIRECTION_A, 0);
+  analogWrite(DIRECTION_B, 215);
+  delay(500);
+  analogWrite(DIRECTION_A, 0);
+  analogWrite(DIRECTION_B, 0);
+    drive(); 
+  //}
+
+  delay(5000);
+  */
+    drive();
+}
+
+
+void drive()
 {
 
   /*
@@ -138,8 +301,7 @@ void loop()
   
   poti_wert =analogRead(POTI_PIN);  //Der aktuelle Stand des Potis wird eingelesen
 
-  Serial.print("Poti-Wert: ");Serial.println(poti_wert);
-  
+  Serial.print("Poti-Wert nochmal: ");Serial.println(poti_wert);
   /*
    * Steht der Poti im Bereich des OFFSET, bleibt das Licht aus.
    */
