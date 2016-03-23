@@ -1,7 +1,8 @@
 /*
  * Autor: Marco Steffens (marco.steffens@gmail.com)
+ * Sketch: Lichtuhr_Motor
  * Datum: 23.03.2016
- * Version: 2.0
+ * Version: 1.0
  * Lizenz: cc zero (http://creativecommons.org/publicdomain/zero/1.0/deed.de)
  */
  
@@ -33,7 +34,7 @@ const int LED_1 = 9; //Oberste LED
 const int DIRECTION_A = 10;
 const int DIRECTION_B = 11;
 
-const int SPEED = 200;         //Geschwindigkeit des Poti. Werte unter 200 gehen mit Stromversorgung über USB gar nicht, da regt sich der Motor nicht.
+const int SPEED = 210;         //Geschwindigkeit des Poti. Werte unter 200 gehen mit Stromversorgung über USB gar nicht, da regt sich der Motor nicht.
 
 unsigned long time = millis();
 const unsigned long PERIOD = 5000; //alle 5000ms soll der poti fahren.

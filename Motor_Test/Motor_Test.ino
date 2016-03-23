@@ -2,12 +2,16 @@
 const int DIRECTION_A = 10;  //B-IB
 const int DIRECTION_B = 11;  //B-IA
 
-const int SPEED = 200;         //Geschwindigkeit des Poti. Werte unter 200 gehen mit Stromversorgung über USB gar nicht, da regt sich der Motor nicht.
+/*
+ * Geschwindigkeit des Poti. 255 ist Maximum, Werte unter 200 gingen bei mir gar nicht.
+ * Aber auch bei 200 hakt das Poti schon.
+ */
+const int SPEED = 200;
 
 /* ******************************************************************************************************************* */
 
 unsigned long time = millis();
-const unsigned long PERIOD = 5000; //alle 5000ms soll der poti fahren.
+const unsigned long PERIOD = 5000; //alle 5000ms soll das Poti fahren.
 
 const int WAITING = 0;
 const int RUNNING = 1;
